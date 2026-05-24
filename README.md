@@ -20,14 +20,14 @@
 
 | 角色 | 推薦 Skills |
 |------|------------|
-| 港澳 CC（課程顧問）| `sales-faq`、`TOP_cases`、`colleague-observation` |
+| 港澳 CC（課程顧問）| `sales-faq`、`TOP_cases`、`colleague-observation`、`after-class-report` |
 | 團隊主管 | `performance-report`、`cc-analysis`、`business-analysis` |
 | CRM 運營 | `cc-register`、`vipthink-crm-recording` |
 | AI 愛好者 | 所有 Skills（可參考點樣用 OpenClaw 構建教育行業教練系統）|
 
 ---
 
-## 📦 Skills 目錄（共9個）
+## 📦 Skills 目錄（共10個）
 
 ### 1️⃣ sales-faq（港澳銷售 FAQ 話術工具箱）
 > 港澳家長最常問的 30+ 問題標準答案
@@ -123,6 +123,17 @@
 **工作流：**
 - 提取學員 ID → CRM 下載錄音 → Whisper AI 轉寫 → 飛書表格填寫
 - 已完成 51 個學員錄音批量轉寫
+
+---
+
+### 🔟 after-class-report（學員課後報告圖片生成）
+> 把 demo 課老師原始反饋整理成港澳家長可直接轉發的繁體粵語長圖報告
+
+**功能：**
+- 生成 VIPThink 豌豆綠風格課後報告圖片
+- 自動融入數學能力點、香港升學場景、兒童心理角度
+- 支持飛書自建應用私聊發圖
+- 真實學員報告和臨時圖片默認本地保存，不提交倉庫
 
 ---
 
