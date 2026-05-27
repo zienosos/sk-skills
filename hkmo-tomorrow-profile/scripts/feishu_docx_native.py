@@ -177,11 +177,72 @@ def score_items(items, text):
     scored = []
     for item in items:
         keywords = item.get("signals") or item.get("keywords") or []
-        score = sum(1 for keyword in keywords if keyword.lower() in text)
+        score = sum(max(1, len(keyword)) for keyword in keywords if keyword.lower() in text)
         if score:
             scored.append((score, item))
     scored.sort(key=lambda pair: pair[0], reverse=True)
     return [item for _, item in scored]
+
+
+def has_dad_decision_context(text):
+    decision_phrases = [
+        "同爸爸商量",
+        "跟爸爸商量",
+        "和爸爸商量",
+        "跟爸爸讨论",
+        "同爸爸討論",
+        "問爸爸",
+        "问爸爸",
+        "爸爸决定",
+        "爸爸決定",
+        "爸爸不同意",
+        "爸爸唔同意",
+        "爸爸考虑",
+        "爸爸考慮",
+        "爸爸有顾虑",
+        "爸爸有顧慮",
+        "爸爸觉得",
+        "爸爸覺得",
+        "老公不同意",
+        "老公唔同意",
+        "先生不同意",
+        "先生唔同意",
+        "另一半商量",
+        "家人商量",
+        "一家人商量",
+    ]
+    receiver_only = [
+        "爸爸接听",
+        "爸爸接聽",
+        "爸爸接的电话",
+        "爸爸接的電話",
+        "爸爸听电话",
+        "爸爸聽電話",
+        "爸爸接电话",
+        "爸爸接電話",
+        "妈妈接听",
+        "媽媽接聽",
+        "妈妈接的电话",
+        "媽媽接的電話",
+        "妈妈听电话",
+        "媽媽聽電話",
+        "妈妈接电话",
+        "媽媽接電話",
+    ]
+    if any(phrase in text for phrase in decision_phrases):
+        return True
+    return False if any(phrase in text for phrase in receiver_only) else False
+
+
+def filter_contextual_matches(items, text):
+    filtered = []
+    for item in items:
+        if item.get("id") == "dad_decision" and not has_dad_decision_context(text):
+            continue
+        if item.get("name") == "要同爸爸商量" and not has_dad_decision_context(text):
+            continue
+        filtered.append(item)
+    return filtered
 
 
 def infer_intent(text):
@@ -267,8 +328,10 @@ def analyze_rows(rows, rules):
     items = []
     for row in rows:
         text = normalize_text(row)
-        parent = (score_items(rules["parent_types"], text) or rules["parent_types"])[0]
-        objection_item = (score_items(rules["common_objections"], text) or [None])[0]
+        parent_matches = filter_contextual_matches(score_items(rules["parent_types"], text), text)
+        objection_matches = filter_contextual_matches(score_items(rules["common_objections"], text), text)
+        parent = (parent_matches or rules["parent_types"])[0]
+        objection_item = (objection_matches or [None])[0]
         objection = objection_item["name"] if objection_item else "需课后进一步确认"
         stage, goal = follow_stage(infer_intent(text), objection)
         needs = infer_needs(text)
